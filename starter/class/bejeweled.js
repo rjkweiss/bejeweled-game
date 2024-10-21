@@ -8,7 +8,7 @@ class Bejeweled {
     this.playerTurn = "O";
 
     // Initialize this
-    this.grid = this.initializeGrid();
+    this.grid = this.initializeGrid(['🥝', '🍓', '🥥', '🍇', '🍊', '🍋']);
 
     this.cursor = new Cursor(8, 8);
 
@@ -20,8 +20,8 @@ class Bejeweled {
     Screen.render();
   }
 
-  initializeGrid() {
-    const validGems = ['🥝', '🍓', '🥥', '🍇', '🍊', '🍋'];
+  initializeGrid(validGems) {
+
     let grid = Array.from({ length: 8 }, () =>
       Array.from({ length: 8 }, () =>
         validGems[Math.floor(Math.random() * validGems.length)]
