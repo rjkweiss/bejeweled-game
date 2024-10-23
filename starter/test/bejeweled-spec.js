@@ -44,19 +44,39 @@ describe ('Bejeweled', function () {
     // });
 
     it('should swap 3 matching horizontally', function() {
-      const matches = Bejeweled.prototype.swapGems(0, 0, 0, 1);
-      expect(matches).to.not.be.empty;
+      grid = [['🥝', '🥝', '🥝', '🥥', '🍊', '🍋'],
+              ['🍇', '🥝', '🍊', '🍇', '🥥', '🍊'],
+              ['🥥', '🍇', '🥥', '🍋', '🍊', '🍋'],
+              ['🥝', '🥝', '🍊', '🍇', '🍊', '🍊']];
+      const matches = Bejeweled.checkForMatches(grid);
+      expect(matches).to.deep.equal([[0, 0], [0, 1], [0, 2]]);
     });
 
     it('should swap 3 matches vertically', function() {
-
+      grid = [['🍇', '🥝', '🥝', '🥥', '🍊', '🍋'],
+              ['🍇', '🍊', '🍊', '🍇', '🥥', '🍊'],
+              ['🍇', '🍇', '🥥', '🍋', '🍊', '🍋'],
+              ['🥝', '🥝', '🍊', '🍇', '🍊', '🍊']];
+      const matches = Bejeweled.checkForMatches(grid);
+      expect(matches).to.deep.equal([[0, 0], [1, 0], [2, 0]]);
     });
+
   });
 
-  // Add tests for swaps that set up combos
-  context('it should test for swaps that set up combos', function() {});
+  context('it should create a new match after a valid swap', function() {
+    grid = [['🥝', '🥝', '🍊', '🍊', '🍊', '🍋', '🍇', '🥥'],
+            ['🍊', '🍇', '🍊', '🍋', '🍇', '🍋', '🍊', '🥥']];
+    Bejeweled.prototype.swapGems(grid, 0, 2, 0, 3);
+    const matches = Bejeweled.checkForMatches(grid);
+    expect(matches).to.not.be.empty;
+  });
 
   // Add tests to check if there are no possible valid moves
-  context('it should check for no possible valid moves', function() {});
+  context('it should check for no possible valid moves', function() {
+    grid = [['🥝', '🍋', '🥝', '🍊', '🥥', '🍋', '🍇', '🍋'],
+            ['🍊', '🍇', '🥥', '🍋', '🥝', '🍊', '🥝', '🍇']];
+    expect(Bejeweled.prototype.hasValidMoves(grid)).to.be.false;
+  });
+
 
 });

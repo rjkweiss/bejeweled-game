@@ -60,13 +60,13 @@ class Bejeweled {
     }
   }
 
-  swapGems(row1, col1, row2, col2) {
-    let temp = this.grid[row1][col1];
-    this.grid[row1][col2] = this.grid[row2][col2];
-    this.grid[row2][col2] = temp;
+  swapGems(grid, row1, col1, row2, col2) {
+    let temp = grid[row1][col1];
+    grid[row1][col2] = grid[row2][col2];
+    grid[row2][col2] = temp;
 
     // check for matches after swap
-    const matches = Bejeweled.checkForMatches(this.grid);
+    const matches = Bejeweled.checkForMatches(grid);
 
     if (matches.length > 0) {
       Screen.render();
@@ -74,12 +74,50 @@ class Bejeweled {
     }
 
     // if no matches, swap back
-    this.grid[row2][col2] = this.grid[row1][col1];
-    this.grid[row1][col1] = temp;
+    grid[row2][col2] = grid[row1][col1];
+    grid[row1][col1] = temp;
 
     Screen.render();
 
     return [];
+  }
+
+  hasValidMoves(grid) {
+    for (let row = 0; row < grid.length; row++) {
+      for (let col = 0; col < grid[0].length; col++) {
+        // check right for potential swaps
+        if (col < grid[0].length - 1) {
+          const temp = grid[row][col];
+          grid[row][col] = grid[row][col + 1];
+          grid[row][col + 1] = temp;
+
+          // check for matches
+          if (Bejeweled.checkForMatches(grid).length > 0) {
+            return true
+          }
+
+          // we haven't found any matches, so we swap back
+          grid[row][col + 1] = grid[row][col];
+          grid[row][col] = temp;
+        }
+
+        // check down for potential swaps
+        if (row < grid.length - 1) {
+          const temp = grid[row][col];
+          grid[row][col] = grid[row + 1][col];
+          grid[row + 1][col] = temp;
+
+          if (Bejeweled.checkForMatches(grid).length > 0) {
+            return true;
+          }
+
+          // otherwise swap back if no swaps were found
+          grid[row + 1][col] = grid[row][col];
+          grid[row][col] = temp;
+        }
+      }
+    }
+    return false;
   }
 
   static checkForMatches(grid) {
