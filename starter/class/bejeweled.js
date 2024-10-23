@@ -13,11 +13,67 @@ class Bejeweled {
     this.cursor = new Cursor(8, 8);
 
     Screen.initialize(8, 8);
-    Screen.setGridlines(false);
-    // this.initializeGrid();
+    this.printGrid();
+    this.initializeCommands();
+    // Screen.setGridlines(true);
 
     this.cursor.setBackgroundColor();
     Screen.render();
+  }
+
+  initializeCommands() {
+    Screen.addCommand('up', 'Move Up', () => {this.cursor.up(); this.printGrid()});
+    Screen.addCommand('down', 'Move Down', () => {this.cursor.down(); this.printGrid()});
+    Screen.addCommand('left', 'Move Left', () => {this.cursor.left(); this.printGrid()});
+    Screen.addCommand('right', 'Move Right', () => {this.cursor.right(); this.printGrid()});
+    Screen.addCommand('u', 'Swap Up', () => {
+      const {row, col} = this.cursor;
+      const nextPos = {row: row - 1, col};
+      this.swapAndCheck(this.cursor, nextPos);
+    });
+    Screen.addCommand('d', 'Swap Down', () => {
+      const {row, col} = this.cursor;
+      const nextPos = {row: row + 1, col};
+      this.swapAndCheck(this.cursor, nextPos);
+    });
+    Screen.addCommand('l', 'Swap Left', () => {
+      const {row, col} = this.cursor;
+      const nextPos = {row, col: col - 1};
+      this.swapAndCheck(this.cursor, nextPos);
+    });
+    Screen.addCommand('r', 'Swap Right', () => {
+      const {row, col} = this.cursor;
+      const nextPos = {row, col: col + 1};
+      this.swapAndCheck(this.cursor, nextPos);
+    });
+  }
+
+  printGrid() {
+    Screen.grid = this.grid.map(row => row.map(gem => gem));
+    Screen.render();
+  }
+
+  swapAndCheck(pos1, pos2) {
+    // only swap if next position is valid
+    if (pos2.row >= 0 && pos2.row < this.grid.length && pos2.col >= 0 && pos2.col < this.grid[0].length) {
+      this.swapGems(this.grid, pos1.row, pos1.col, pos2.row, pos2.col);
+
+      // check for matches
+      const matches = Bejeweled.checkForMatches(this.grid);
+
+      if (matches.length) {
+        console.log(`${this.playerTurn} made a move!`);
+        this.printGrid();
+      } else {
+        console.log(`${this.playerTurn} has found no matches! Swap players please!`);
+        // undo any swaps done by previous player
+        this.swapGems(this.grid, pos1.row, pos1.col, pos2.row, pos2.col);
+        // switch players
+        this.playerTurn = this.playerTurn === 'O' ? 'X': 'O';
+      }
+    } else {
+      console.log('invalid swap positions!');
+    }
   }
 
   initializeGrid(validGems) {
