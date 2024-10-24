@@ -10,22 +10,25 @@ class Bejeweled {
     // Initialize this
     this.grid = this.initializeGrid(['🥝', '🍓', '🥥', '🍇', '🍊', '🍋']);
 
+    // this.validGems = ['🥝', '🍓', '🥥', '🍇', '🍊', '🍋'];
+
     this.cursor = new Cursor(8, 8);
 
     Screen.initialize(8, 8);
-    this.printGrid();
+    Screen.setGridlines(false);
+
     this.initializeCommands();
-    // Screen.setGridlines(true);
+    this.updateGrid();
 
     this.cursor.setBackgroundColor();
     Screen.render();
   }
 
   initializeCommands() {
-    Screen.addCommand('up', 'Move Up', () => {this.cursor.up(); this.printGrid()});
-    Screen.addCommand('down', 'Move Down', () => {this.cursor.down(); this.printGrid()});
-    Screen.addCommand('left', 'Move Left', () => {this.cursor.left(); this.printGrid()});
-    Screen.addCommand('right', 'Move Right', () => {this.cursor.right(); this.printGrid()});
+    Screen.addCommand('up', 'Move Up', () => {this.cursor.up(); this.updateGrid()});
+    Screen.addCommand('down', 'Move Down', () => {this.cursor.down(); this.updateGrid()});
+    Screen.addCommand('left', 'Move Left', () => {this.cursor.left(); this.updateGrid()});
+    Screen.addCommand('right', 'Move Right', () => {this.cursor.right(); this.updateGrid()});
     Screen.addCommand('u', 'Swap Up', () => {
       const {row, col} = this.cursor;
       const nextPos = {row: row - 1, col};
@@ -48,7 +51,7 @@ class Bejeweled {
     });
   }
 
-  printGrid() {
+ updateGrid() {
     Screen.grid = this.grid.map(row => row.map(gem => gem));
     Screen.render();
   }
@@ -63,7 +66,12 @@ class Bejeweled {
 
       if (matches.length) {
         console.log(`${this.playerTurn} made a move!`);
-        this.printGrid();
+
+        // remove any matches when a match has been made
+        this.removeInitialMatches(this.grid, ['🥝', '🍓', '🥥', '🍇', '🍊', '🍋']);
+
+        // update the grid
+        this.updateGrid();
       } else {
         console.log(`${this.playerTurn} has found no matches! Swap players please!`);
         // undo any swaps done by previous player
